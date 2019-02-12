@@ -19,9 +19,7 @@ public class ProducerAndConsumer1 {
         Storage storage = pac.new Storage();
         Producer p1 = pac.new Producer("生产者1", "小米手机", storage);
         Producer p2 = pac.new Producer("生产者2", "华为手机", storage);
-
         Consumer c1 = pac.new Consumer(storage);
-
 
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.submit(p1);
@@ -44,14 +42,13 @@ public class ProducerAndConsumer1 {
             this.storage = storage;
         }
 
-
         @Override
         public void run() {
             try {
-                for (int i = 0; i < 50; i++) {
-                    Product p = new Product(pname, name, i);
+                for (int i = 0; i < 15; i++) {
+                    Product p = new Product(pname, name);
                     storage.push(p);
-                    Thread.sleep(300);
+                    Thread.sleep(100);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -63,13 +60,11 @@ public class ProducerAndConsumer1 {
      * 消费者
      */
     class Consumer implements Runnable {
-
         private Storage storage;
 
         public Consumer(Storage storage) {
             this.storage = storage;
         }
-
 
         @Override
         public void run() {
@@ -98,21 +93,26 @@ public class ProducerAndConsumer1 {
             this.id = id;
         }
 
+        public Product(String name, String from) {
+            this.name = name;
+            this.from = from;
+        }
 
         public String getName() {
             return name;
         }
 
-
         public String getFrom() {
             return from;
         }
-
 
         public int getId() {
             return id;
         }
 
+        public void setId(int id) {
+            this.id = id;
+        }
     }
 
     /**
@@ -123,6 +123,7 @@ public class ProducerAndConsumer1 {
         //阻塞队列
         private BlockingQueue<Product> storage = new LinkedBlockingDeque<>();
 
+        private int index = 1;
 
         /**
          * 消费
@@ -137,9 +138,9 @@ public class ProducerAndConsumer1 {
          */
         protected void push(Product product) throws InterruptedException {
             storage.put(product);
+            product.setId(index++);
             System.out.println(product.getFrom() + ",生产了" + product.getName() + "--> id:" + product.getId());
         }
-
     }
 }
 

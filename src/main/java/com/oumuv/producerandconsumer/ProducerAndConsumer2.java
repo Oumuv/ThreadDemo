@@ -6,7 +6,6 @@ import java.util.concurrent.Executors;
 /**
  * 生产者与消费者问题：wait、notify（notifyAll）应用
  * 一个篮子可存20颗鸡蛋，鸡蛋数量小于5时生产者开始生产鸡蛋,篮子满后生产者停止生产并进入等待状态，鸡蛋数量等于0时消费者不能消费
- *
  */
 public class ProducerAndConsumer2 {
 
@@ -18,13 +17,13 @@ public class ProducerAndConsumer2 {
 //        ProducerAndConsumer2.Producer p2 = pac.new Producer(eggKep);
 
         Consumer c1 = pac.new Consumer(eggKep);
-        ProducerAndConsumer2.Consumer c2 = pac.new Consumer(eggKep);
+//        ProducerAndConsumer2.Consumer c2 = pac.new Consumer(eggKep);
 
         ExecutorService executorService = Executors.newCachedThreadPool();
         executorService.submit(p1);
 //        executorService.submit(p2);
         executorService.submit(c1);
-        executorService.submit(c2);
+//        executorService.submit(c2);
     }
 
 
@@ -41,7 +40,8 @@ public class ProducerAndConsumer2 {
         @Override
         public void run() {
             try {
-                for (int i = 0; i < 50; i++) {
+//                for (int i = 0; i < 50; i++) {
+                while (true) {
                     agg.produce();
                     Thread.sleep(300);
                 }
@@ -64,7 +64,8 @@ public class ProducerAndConsumer2 {
         @Override
         public void run() {
             try {
-                for (int i = 0; i < 50; i++) {
+//                for (int i = 0; i < 50; i++) {
+                while (true) {
                     agg.consume();
                     Thread.sleep(1000);
                 }
@@ -97,11 +98,11 @@ public class ProducerAndConsumer2 {
             }
 
             System.out.println("生产了一颗鸡蛋，现有鸡蛋：" + (++num) + "颗");
-            if (num == 20) {
+            if (num == maxSize) {
                 flag = false;
                 System.out.println("篮子满了，生产者停止工作！");
             }
-            this.notify();
+            this.notifyAll();
         }
 
         protected synchronized void consume() throws InterruptedException {
@@ -114,7 +115,7 @@ public class ProducerAndConsumer2 {
                 flag = true;
                 System.out.println("通知生产者开始工作！");
             }
-            this.notify();
+            this.notifyAll();
         }
     }
 }
